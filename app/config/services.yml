@@ -33,3 +33,9 @@ services:
     # AppBundle\Service\ExampleService:
     #     arguments:
     #         $someArgument: 'some_value'
+
+#    app.admin.user:
+#        class: AppBundle\Admin\UserAdmin
+#        arguments: [~,App\Entity\User, ~]
+#        tags:
+#            - { name: sonata.admin, manager}
