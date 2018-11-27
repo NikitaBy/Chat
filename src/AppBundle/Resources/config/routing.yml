@@ -1,0 +1,4 @@
+app_topic_chat:
+    channel: app/chat/{room}/{user_id}
+    handler:
+        callback: 'app.topic.chat'
