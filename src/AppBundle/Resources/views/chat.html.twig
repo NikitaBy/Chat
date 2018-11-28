@@ -1,0 +1,51 @@
+{% extends '::base.html.twig' %}
+
+{% block javascripts %}
+    <script src="{{ asset('bundles/goswebsocket/js/vendor/autobahn.min.js') }}"></script>
+    <script src="{{ asset('bundles/goswebsocket/js/gos_web_socket_client.js') }}"></script>
+
+    <script>
+        let webSocket = WS.connect("ws://127.0.0.1:8080");
+        let session = null;
+
+        webSocket.on("socket/disconnect", function (error) {
+            //error provides us with some insight into the disconnection: error.reason and error.code
+            console.log("Disconnected for " + error.reason + " with code " + error.code);
+        });
+
+        webSocket.on("socket/connect", function (_session) {
+            session = _session;
+            session.subscribe("chat/habrchat", function (uri, payload) {
+                console.log("Received message", payload.msg);
+            });
+
+            session.publish("chat/habrchat", "Привет, я пришел от клиента!!!");
+        });
+
+        webSocket.onMessage = function (e) {
+            let messages = JSON.parse(e.data);
+            for (let i in messages) {
+                let ul = document.getElementById("chat-list");
+                let li = document.createElement("li");
+                li.appendChild(e);
+                ul.appendChild(li);
+            }
+        };
+
+        document.getElementById("form-submit").addEventListener("click", function () {
+            let msg = document.getElementById("form-message").value;
+            if (msg) {
+                session.publish('chat/habrchat', msg);
+            }
+        });
+
+    </script>
+{% endblock %}
+
+{% block body %}
+    <h1>Public chat</h1>
+    <ul id="chat-list"></ul>
+    <hr>
+    <textarea id="form-message" placeholder="Your public message here"></textarea>
+    <input type="button" id="form-submit" value="Send message"/>
+{% endblock %}
