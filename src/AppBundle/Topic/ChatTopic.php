@@ -54,6 +54,11 @@ class ChatTopic implements TopicInterface
         ]);
     }
 
+    public function onMessage(ConnectionInterface $from, $message)
+    {
+        
+    }
+
     /**
      * @return string
      */
