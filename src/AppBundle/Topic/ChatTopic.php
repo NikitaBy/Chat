@@ -22,7 +22,8 @@ class ChatTopic implements TopicInterface
         $userId = $request->getAttributes()->get('user_id');
 
         //this will broadcast the message to ALL subscribers of this topic.
-        $topic->broadcast(['msg' => 'Новый пользователь зашел в комнату ' . $room . ' в личку к пользователю ' . $userId]);    }
+        $topic->broadcast(['msg' => 'Новый пользователь зашел в комнату ' . $room . ' в личку к пользователю ' . $userId]);
+    }
 
     /**
      * @param  ConnectionInterface $connection
@@ -34,7 +35,8 @@ class ChatTopic implements TopicInterface
         $room = $request->getAttributes()->get('room');
         $userId = $request->getAttributes()->get('user_id');
         //this will broadcast the message to ALL subscribers of this topic.
-        $topic->broadcast(['msg' => 'Новый пользователь вышел из комнаты ' . $room . ' лички с пользователем ' . $userId]);    }
+        $topic->broadcast(['msg' => 'Новый пользователь вышел из комнаты ' . $room . ' лички с пользователем ' . $userId]);
+    }
 
     /**
      * @param  ConnectionInterface $connection
@@ -46,17 +48,24 @@ class ChatTopic implements TopicInterface
      */
     public function onPublish(ConnectionInterface $connection, Topic $topic, WampRequest $request, $event, array $exclude, array $eligible)
     {
-        $room = $request->getAttributes()->get('room');
-        $userId = $request->getAttributes()->get('user_id');
-
-        $topic->broadcast([
-            'msg' => 'В комнату ' . $room . 'пользователю ' . $userId . ' поступило сообщение: ' . $event,
-        ]);
+//        $room = $request->getAttributes()->get('room');
+//        $userId = $request->getAttributes()->get('user_id');
+//
+//        $topic->broadcast([
+//            'msg' => 'В комнату ' . $room . 'пользователю ' . $userId . ' поступило сообщение: ' . $event,
+//        ]);
+        $this->sendMessage($topic, $event);
     }
 
-    public function onMessage(ConnectionInterface $from, $message)
+    public function sendMessage(Topic $topic, $event)
     {
-        
+        $message = $event['msg'];
+        $user = $event['user'];
+        $topic->broadcast([
+            'msg' => $message,
+            'user' => $user,
+        ]);
+
     }
 
     /**

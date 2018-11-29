@@ -16,26 +16,23 @@
         webSocket.on("socket/connect", function (_session) {
             session = _session;
             session.subscribe("chat/habrchat", function (uri, payload) {
+                let ul = document.getElementById("chat-list");
+                let li = document.createElement("li");
+                li.appendChild(document.createTextNode(payload.msg));
+                ul.appendChild(li);
+
                 console.log("Received message", payload.msg);
             });
 
             session.publish("chat/habrchat", "Привет, я пришел от клиента!!!");
         });
 
-        webSocket.onMessage = function (e) {
-            let messages = JSON.parse(e.data);
-            for (let i in messages) {
-                let ul = document.getElementById("chat-list");
-                let li = document.createElement("li");
-                li.appendChild(e);
-                ul.appendChild(li);
-            }
-        };
-
         document.getElementById("form-submit").addEventListener("click", function () {
             let msg = document.getElementById("form-message").value;
+
             if (msg) {
                 session.publish('chat/habrchat', msg);
+                document.getElementById("form-message").value="";
             }
         });
 
@@ -44,6 +41,7 @@
 
 {% block body %}
     <h1>Public chat</h1>
+    <div>{{ app.user.username }}</div>
     <ul id="chat-list"></ul>
     <hr>
     <textarea id="form-message" placeholder="Your public message here"></textarea>
