@@ -19,6 +19,11 @@ class User extends BaseUser
      */
     protected $id;
 
+    public function __toString()
+    {
+        return $this->username.'('.$this->email.')';
+    }
+
     /**
      * @var ChatRoom[] $chatRooms
      *
