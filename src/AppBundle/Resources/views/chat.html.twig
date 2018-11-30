@@ -3,47 +3,24 @@
 {% block javascripts %}
     <script src="{{ asset('bundles/goswebsocket/js/vendor/autobahn.min.js') }}"></script>
     <script src="{{ asset('bundles/goswebsocket/js/gos_web_socket_client.js') }}"></script>
-
-    <script>
-        let webSocket = WS.connect("ws://127.0.0.1:8080");
-        let session = null;
-
-        webSocket.on("socket/disconnect", function (error) {
-            //error provides us with some insight into the disconnection: error.reason and error.code
-            console.log("Disconnected for " + error.reason + " with code " + error.code);
-        });
-
-        webSocket.on("socket/connect", function (_session) {
-            session = _session;
-            session.subscribe("chat/habrchat", function (uri, payload) {
-                let ul = document.getElementById("chat-list");
-                let li = document.createElement("li");
-                li.appendChild(document.createTextNode(payload.msg));
-                ul.appendChild(li);
-
-                console.log("Received message", payload.msg);
-            });
-
-            session.publish("chat/habrchat", "Привет, я пришел от клиента!!!");
-        });
-
-        document.getElementById("form-submit").addEventListener("click", function () {
-            let msg = document.getElementById("form-message").value;
-
-            if (msg) {
-                session.publish('chat/habrchat', msg);
-                document.getElementById("form-message").value="";
-            }
-        });
-
-    </script>
+    <script src="{{ asset('bundles/app/js/chat.js') }}"></script>
 {% endblock %}
 
 {% block body %}
+    {{ dump(config) }}
     <h1>Public chat</h1>
-    <div>{{ app.user.username }}</div>
-    <ul id="chat-list"></ul>
-    <hr>
-    <textarea id="form-message" placeholder="Your public message here"></textarea>
-    <input type="button" id="form-submit" value="Send message"/>
+    <div>
+        {#{{ currentUser }}#}
+    </div>
+    <div class="chat-body">
+        <ul id="chat-list"></ul>
+        <hr>
+    </div>
+
+    <div>
+        <textarea id="form-message" placeholder="Your public message here"></textarea>
+    </div>
+    <div>
+        <input type="button" id="form-submit" value="Send message"/>
+    </div>
 {% endblock %}

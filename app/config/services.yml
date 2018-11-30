@@ -4,32 +4,49 @@ parameters:
 #parameter_name: value
 
 services:
-  # default configuration for services in *this* file
-  _defaults:
-    # automatically injects dependencies in your services
-    autowire: true
-    # automatically registers your services as commands, event subscribers, etc.
-    autoconfigure: true
-    # this means you cannot fetch services directly from the container via $container->get()
-    # if you need to do this, you can override this setting on individual services
-    public: false
+    pdo:
+        class: PDO
+        arguments:
+            - 'mysql:dbname=chat, host=localhost'
+            - {db_table: session, db_username: root, db_password: test}
 
-  # makes classes in src/AppBundle available to be used as services
-  # this creates a service per class whose id is the fully-qualified class name
-  AppBundle\:
-    resource: '../../src/AppBundle/*'
-    # you can exclude directories or files
-    # but if a service is unused, it's removed anyway
-    exclude: '../../src/AppBundle/{Entity,Repository,Tests}'
+    session.handler.pdo:
+        class: Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler
+        arguments:
+            - !service {class: PDO, factory: 'database_connection:getWrappedConnection'}
+            - {lock_mode: 0}
 
-  # controllers are imported separately to make sure they're public
-  # and have a tag that allows actions to type-hint services
-  AppBundle\Controller\:
-    resource: '../../src/AppBundle/Controller'
-    public: true
-    tags: ['controller.service_arguments']
+    # default configuration for services in *this* file
+    _defaults:
+        # automatically injects dependencies in your services
+        autowire: true
+        # automatically registers your services as commands, event subscribers, etc.
+        autoconfigure: true
+        # this means you cannot fetch services directly from the container via $container->get()
+        # if you need to do this, you can override this setting on individual services
+        public: false
 
-  app.topic.chat:
-    class: AppBundle\Topic\ChatTopic
-    tags:
-      - { name: gos_web_socket.topic }
+    # makes classes in src/AppBundle available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    AppBundle\:
+        resource: '../../src/AppBundle/*'
+        # you can exclude directories or files
+        # but if a service is unused, it's removed anyway
+        exclude: '../../src/AppBundle/{Entity,Repository,Tests}'
+
+    # controllers are imported separately to make sure they're public
+    # and have a tag that allows actions to type-hint services
+    AppBundle\Controller\:
+        resource: '../../src/AppBundle/Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
+    app.topic.chat:
+        class: AppBundle\Topic\ChatTopic
+        tags:
+            - { name: gos_web_socket.topic }
+
+    AppBundle\Topic\Topic:
+        arguments: ['@gos_web_socket.websocket.client_manipulator']
+
+    Gos\Bundle\WebSocketBundle\Client\ClientManipulatorInterface: '@gos_web_socket.websocket.client_manipulator'

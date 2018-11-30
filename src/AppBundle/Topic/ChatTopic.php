@@ -3,6 +3,8 @@
 namespace AppBundle\Topic;
 
 
+use AppBundle\Entity\User;
+use Gos\Bundle\WebSocketBundle\Client\ClientManipulatorInterface;
 use Gos\Bundle\WebSocketBundle\Router\WampRequest;
 use Gos\Bundle\WebSocketBundle\Topic\TopicInterface;
 use Ratchet\ConnectionInterface;
@@ -10,6 +12,21 @@ use Ratchet\Wamp\Topic;
 
 class ChatTopic implements TopicInterface
 {
+    /**
+     * @var ClientManipulatorInterface $clientManipulator
+     */
+    private $clientManipulator;
+
+    /**
+     * ChatTopic constructor.
+     *
+     * @param ClientManipulatorInterface $clientManipulator
+     */
+    public function __construct(ClientManipulatorInterface $clientManipulator)
+    {
+        $this->clientManipulator = $clientManipulator;
+    }
+
 
     /**
      * @param  ConnectionInterface $connection
@@ -18,11 +35,10 @@ class ChatTopic implements TopicInterface
      */
     public function onSubscribe(ConnectionInterface $connection, Topic $topic, WampRequest $request)
     {
-        $room = $request->getAttributes()->get('room');
-        $userId = $request->getAttributes()->get('user_id');
+        $user = $this->clientManipulator->getClient($connection);
 
         //this will broadcast the message to ALL subscribers of this topic.
-        $topic->broadcast(['msg' => 'Новый пользователь зашел в комнату ' . $room . ' в личку к пользователю ' . $userId]);
+        $topic->broadcast(['msg' => 'Новый пользователь зашел в комнату  в личку к пользователю ' . $user]);
     }
 
     /**
@@ -48,23 +64,23 @@ class ChatTopic implements TopicInterface
      */
     public function onPublish(ConnectionInterface $connection, Topic $topic, WampRequest $request, $event, array $exclude, array $eligible)
     {
-//        $room = $request->getAttributes()->get('room');
-//        $userId = $request->getAttributes()->get('user_id');
-//
-//        $topic->broadcast([
-//            'msg' => 'В комнату ' . $room . 'пользователю ' . $userId . ' поступило сообщение: ' . $event,
-//        ]);
-        $this->sendMessage($topic, $event);
+        $this->sendMessage($connection, $topic, $event);
     }
 
-    public function sendMessage(Topic $topic, $event)
+    public function sendMessage(ConnectionInterface $connection, Topic $topic, $event)
     {
         $message = $event['msg'];
-        $user = $event['user'];
-        $topic->broadcast([
-            'msg' => $message,
-            'user' => $user,
-        ]);
+//        $user = $event['user'];
+        /** @var User $user */
+        $user = $this->clientManipulator->getClient($connection);
+        $topic->broadcast(
+            [
+                'msg' => $message,
+                'usr' => $user->getUsername(),
+            ],
+            [],
+            []
+        );
 
     }
 
