@@ -21,6 +21,10 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/orm" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/fig/link-util" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/friendsofsymfony/user-bundle" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/gos/pnctl-event-loop-emitter" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/gos/pubsub-router-bundle" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/gos/web-socket-bundle" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/gos/websocket-client" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/incenteev/composer-parameter-handler" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/jdorn/sql-formatter" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/knplabs/knp-menu" />

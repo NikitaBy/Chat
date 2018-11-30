@@ -5,3 +5,10 @@ services:
         tags:
             - { name: sonata.admin, manager_type: orm, group: admin, label: User }
         public: true
+
+    app.admin.chat_room:
+        class: AppBundle\Admin\ChatRoomAdmin
+        arguments: [~, AppBundle\Entity\ChatRoom, Sonata\AdminBundle\Controller\CRUDController]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: admin, label: Chat Room }
+        public: true

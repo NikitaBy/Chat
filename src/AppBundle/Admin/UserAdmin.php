@@ -8,8 +8,16 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
 
+/**
+ * Class UserAdmin
+ *
+ * @package AppBundle\Admin
+ */
 class UserAdmin extends AbstractAdmin
 {
+    /**
+     * @param DatagridMapper $datagridMapper
+     */
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
@@ -18,10 +26,12 @@ class UserAdmin extends AbstractAdmin
             ->add('enabled')
             ->add('lastLogin')
             ->add('roles')
-            ->add('id')
-        ;
+            ->add('id');
     }
 
+    /**
+     * @param ListMapper $listMapper
+     */
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
@@ -37,10 +47,12 @@ class UserAdmin extends AbstractAdmin
                     'edit' => [],
                     'delete' => [],
                 ],
-            ])
-        ;
+            ]);
     }
 
+    /**
+     * @param FormMapper $formMapper
+     */
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
@@ -48,11 +60,12 @@ class UserAdmin extends AbstractAdmin
             ->add('password')
             ->add('email')
             ->add('enabled')
-            ->add('lastLogin')
-            ->add('roles')
-        ;
+            ->add('roles');
     }
 
+    /**
+     * @param ShowMapper $showMapper
+     */
     protected function configureShowFields(ShowMapper $showMapper)
     {
         $showMapper
@@ -60,7 +73,6 @@ class UserAdmin extends AbstractAdmin
             ->add('email')
             ->add('enabled')
             ->add('lastLogin')
-            ->add('roles')
-        ;
+            ->add('roles');
     }
 }
